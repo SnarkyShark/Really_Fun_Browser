@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Fun Web Browser</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="back">previous</string>
+    <string name="next">next</string>
+    <string name="new_tab">new_tab</string>
+    <string name="website">enter website</string>
+
+</resources>
