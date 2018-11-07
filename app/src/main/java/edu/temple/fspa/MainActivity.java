@@ -8,53 +8,50 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     ViewPager viewPager;
-
-    //ColorFragment fragments[];
-    TabFragment fragments[];
+    ArrayList<String> categories;
+    MyFragmentPageAdapter mPageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
-        fragments = new ColorFragment[4];
-
-        fragments[0] = new ColorFragment();
-        fragments[1] = new ColorFragment();
-        fragments[2] = new ColorFragment();
-        fragments[3] = new ColorFragment(); */
-
-        fragments = new TabFragment[4];
-        fragments[0] = new TabFragment();
-        fragments[1] = new TabFragment();
-        fragments[2] = new TabFragment();
-        fragments[3] = new TabFragment();
-
-
         viewPager = findViewById(R.id.viewPager);
 
-        FragmentStatePagerAdapter fspa = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                return fragments[position];
-            }
+        List<Fragment> fragments = buildFragments();
+        categories = new ArrayList<String>();
+        categories.add("the best");
+        mPageAdapter = new MyFragmentPageAdapter(this,getSupportFragmentManager(), fragments, categories);
+        viewPager.setAdapter(mPageAdapter);
 
-            @Override
-            public int getCount() {
-                return fragments.length;
-            }
-        };
-
-        viewPager.setAdapter(fspa);
+        //Add a new Fragment to the list with bundle
+        Bundle b = new Bundle();
+        b.putInt("position", 1);    // put a thing at position 1
+        String title = "steve"; // name it steve
+        mPageAdapter.add(TabFragment.class, title, b);
+        mPageAdapter.notifyDataSetChanged();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.browser_control, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private List<Fragment> buildFragments() {
+        List<android.support.v4.app.Fragment> fragments = new ArrayList<Fragment>();
+        for(int i = 0; i<categories.size(); i++) {
+            Bundle b = new Bundle();
+            b.putInt("position", i);
+            fragments.add(Fragment.instantiate(this,TabFragment.class.getName(),b));
+        }
+
+        return fragments;
     }
 }
