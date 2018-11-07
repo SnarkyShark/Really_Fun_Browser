@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 public class MyFragmentPageAdapter extends FragmentPagerAdapter {
 
@@ -48,6 +49,15 @@ public class MyFragmentPageAdapter extends FragmentPagerAdapter {
     public void add(Class<TabFragment> c, String title, Bundle b) {
         myFragments.add(Fragment.instantiate(context,c.getName(),b));
         categories.add(title);
+        Log.i("tag","I have " + getCount() + " items right now");
+        Log.i("second", "here's my new boy: " + title);
+    }
+
+    public void add(String url) {
+        myFragments.add(TabFragment.newInstance(url));
+        categories.add(url);
+        Log.i("tag","I have " + getCount() + " items right now");
+        Log.i("second", "here's my new boy: " + url);
     }
 
     public static void setPos(int pos) {
