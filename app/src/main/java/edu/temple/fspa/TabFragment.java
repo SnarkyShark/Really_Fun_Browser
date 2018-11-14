@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -29,9 +31,8 @@ public class TabFragment extends Fragment {
     public static String URL_KEY = "website";
 
     WebView webView;
+    EditText t;
     String currentUrl;
-    ArrayList<String> visitedUrlStack = new ArrayList<String>();
-    int historyPosition;
 
     public TabFragment() {
         // Required empty public constructor
@@ -44,7 +45,6 @@ public class TabFragment extends Fragment {
         Bundle bundle = getArguments();
 
         this.currentUrl = bundle.getString(URL_KEY);
-        historyPosition = 0;
     }
 
     public static TabFragment newInstance(String url){
@@ -62,6 +62,7 @@ public class TabFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_tab, container, false);
 
         webView = v.findViewById(R.id.webView);
+        t = getActivity().findViewById(R.id.websiteEditText);
 
         // just because you put a webview in your app doesn't mean it will automatically respond
         // this is normally more involved
@@ -69,12 +70,12 @@ public class TabFragment extends Fragment {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                //currentUrl = webView.getUrl();
             }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                visitedUrlStack.add(request.getUrl().toString());
-                historyPosition++;
+                //visitedUrlStack.add(request.getUrl().toString());
                 return super.shouldOverrideUrlLoading(view, request);
             }
 
@@ -83,6 +84,9 @@ public class TabFragment extends Fragment {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
+                /*Message msg = Message.obtain();
+                msg.obj = currentUrl;
+                loadHandler.sendMessage(msg); */
             }
         });
 
@@ -121,17 +125,17 @@ public class TabFragment extends Fragment {
         currentUrl = url;
     }
 
+    public void intentChange(String url) {
+        currentUrl = url;
+        webView.loadUrl(currentUrl);
+    }
+
     public void historyNav(int direction) {
-        Log.i("nooe","historynav: TRIED TO MOVE historyPos: " + historyPosition);
-        if (direction < 0 && historyPosition != 0) {
-            historyPosition--;
-            //currentUrl = visitedUrlStack.get(historyPosition);
-            Log.i("no problem", "historynav: WENT BACK");
+        if (direction < 0 && webView.canGoBack()) {
+            webView.goBack();
         }
-        else if (direction >=0 && historyPosition < visitedUrlStack.size() - 1) {
-            historyPosition++;
-            //currentUrl = visitedUrlStack.get(historyPosition + 1);
-            Log.i("no problemo", "historynav: WENT FORWARD");
+        else if (direction >=0 && webView.canGoForward()) {
+            webView.goForward();
         }
     }
 
@@ -140,9 +144,16 @@ public class TabFragment extends Fragment {
         public boolean handleMessage(Message msg) {
             //  ((TextView) findViewById(R.id.displayTextView)).setText((String) msg.obj);
             webView.loadData((String) msg.obj, "text/html", "UTF-8");
-
             return false;
         }
     });
 
+    Handler loadHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            if (t != null)
+                t.setText((String) msg.obj);
+            return false;
+        }
+    });
 }

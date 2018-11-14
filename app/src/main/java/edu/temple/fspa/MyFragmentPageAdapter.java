@@ -49,8 +49,6 @@ public class MyFragmentPageAdapter extends FragmentPagerAdapter {
     public void add(Class<TabFragment> c, String title, Bundle b) {
         myFragments.add(Fragment.instantiate(context,c.getName(),b));
         categories.add(title);
-        Log.i("tag","I have " + getCount() + " items right now");
-        Log.i("second", "here's my new boy: " + title);
     }
 
     public void add(String url) {
